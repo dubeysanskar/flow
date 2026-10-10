@@ -25,10 +25,10 @@ const config: Config = {
         },
         surface: {
           DEFAULT: "#0f111a",
-          dark: "#090a0f",
-          card: "#151824",
-          border: "#23283a",
-          highlight: "#1e2235",
+          dark: "#060710",
+          card: "#10131f",
+          border: "#1e2437",
+          highlight: "#181c2e",
         },
       },
       animation: {

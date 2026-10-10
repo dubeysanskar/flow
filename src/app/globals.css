@@ -2,83 +2,302 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =========================================
+   GOOGLE FONTS
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@600;700;800&display=swap');
+
 @layer base {
   :root {
     --background: 240 10% 4%;
     --foreground: 0 0% 98%;
+    --violet-glow: rgba(139, 92, 246, 0.35);
+    --cyan-glow: rgba(6, 182, 212, 0.3);
+    --emerald-glow: rgba(16, 185, 129, 0.3);
+    --rose-glow: rgba(239, 68, 68, 0.35);
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   body {
-    background-color: #090a0f;
+    background-color: #060710;
     color: #f4f4f5;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     overflow-x: hidden;
+    /* Subtle animated dot grid background */
+    background-image: radial-gradient(rgba(139, 92, 246, 0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-attachment: fixed;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
   }
 }
 
-/* Custom glowing effects */
-.glow-violet {
-  box-shadow: 0 0 25px -5px rgba(139, 92, 246, 0.4);
-}
-
-.glow-cyan {
-  box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.35);
-}
-
-.glow-emerald {
-  box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.35);
-}
-
-/* Glassmorphism backgrounds */
+/* =========================================
+   GLASSMORPHISM
+   ========================================= */
 .glass-panel {
-  background: rgba(18, 21, 32, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(10, 13, 26, 0.75);
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .glass-card {
-  background: rgba(21, 24, 38, 0.55);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(15, 18, 32, 0.60);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Custom scrollbars */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* =========================================
+   HOLOGRAPHIC / PRISMATIC CARD BORDERS
+   ========================================= */
+.holo-card {
+  position: relative;
+  border: 1px solid transparent;
+  background-clip: padding-box;
 }
 
-::-webkit-scrollbar-track {
-  background: #090a0f;
+.holo-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.6) 0%,
+    rgba(6, 182, 212, 0.4) 25%,
+    rgba(168, 85, 247, 0.5) 50%,
+    rgba(59, 130, 246, 0.4) 75%,
+    rgba(139, 92, 246, 0.6) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: holoBorderShift 6s linear infinite;
+  background-size: 200% 200%;
 }
 
+@keyframes holoBorderShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* =========================================
+   GLOW EFFECTS
+   ========================================= */
+.glow-violet {
+  box-shadow: 0 0 30px -5px var(--violet-glow), 0 4px 20px -8px rgba(0,0,0,0.5);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 30px -5px var(--cyan-glow), 0 4px 20px -8px rgba(0,0,0,0.5);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 30px -5px var(--emerald-glow), 0 4px 20px -8px rgba(0,0,0,0.5);
+}
+
+.glow-rose {
+  box-shadow: 0 0 30px -5px var(--rose-glow), 0 4px 20px -8px rgba(0,0,0,0.5);
+}
+
+.text-glow-violet {
+  text-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+}
+
+/* =========================================
+   ORBITRON DISPLAY FONT
+   ========================================= */
+.font-display {
+  font-family: 'Orbitron', monospace;
+}
+
+/* =========================================
+   ANIMATED GRADIENT TEXT
+   ========================================= */
+.gradient-text {
+  background: linear-gradient(135deg, #a78bfa, #6ee7f7, #818cf8, #c084fc);
+  background-size: 300% 300%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 5s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* =========================================
+   TERMINAL TYPEWRITER
+   ========================================= */
+.typewriter-cursor::after {
+  content: '█';
+  animation: blink 1s step-end infinite;
+  color: #8b5cf6;
+  font-weight: 100;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* =========================================
+   AUDIO WAVE / FREQUENCY BARS
+   ========================================= */
+@keyframes voiceBar {
+  0%, 100% { transform: scaleY(0.15); }
+  50%       { transform: scaleY(1); }
+}
+
+.voice-bar {
+  transform-origin: bottom;
+  animation: voiceBar 0.9s ease-in-out infinite alternate;
+}
+.voice-bar:nth-child(1)  { animation-delay: 0.00s; }
+.voice-bar:nth-child(2)  { animation-delay: 0.10s; }
+.voice-bar:nth-child(3)  { animation-delay: 0.18s; }
+.voice-bar:nth-child(4)  { animation-delay: 0.07s; }
+.voice-bar:nth-child(5)  { animation-delay: 0.23s; }
+.voice-bar:nth-child(6)  { animation-delay: 0.13s; }
+.voice-bar:nth-child(7)  { animation-delay: 0.05s; }
+.voice-bar:nth-child(8)  { animation-delay: 0.20s; }
+.voice-bar:nth-child(9)  { animation-delay: 0.16s; }
+.voice-bar:nth-child(10) { animation-delay: 0.09s; }
+.voice-bar:nth-child(11) { animation-delay: 0.25s; }
+.voice-bar:nth-child(12) { animation-delay: 0.04s; }
+.voice-bar:nth-child(13) { animation-delay: 0.14s; }
+.voice-bar:nth-child(14) { animation-delay: 0.19s; }
+.voice-bar:nth-child(15) { animation-delay: 0.06s; }
+.voice-bar:nth-child(16) { animation-delay: 0.22s; }
+.voice-bar:nth-child(17) { animation-delay: 0.11s; }
+.voice-bar:nth-child(18) { animation-delay: 0.17s; }
+.voice-bar:nth-child(19) { animation-delay: 0.03s; }
+.voice-bar:nth-child(20) { animation-delay: 0.21s; }
+
+/* =========================================
+   MIC RIPPLE RINGS
+   ========================================= */
+@keyframes micRing {
+  0%   { transform: scale(1);   opacity: 0.6; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+.mic-ring {
+  animation: micRing 1.8s ease-out infinite;
+}
+.mic-ring:nth-child(2) { animation-delay: 0.6s; }
+.mic-ring:nth-child(3) { animation-delay: 1.2s; }
+
+/* =========================================
+   SCANNING LINE EFFECT
+   ========================================= */
+@keyframes scanLine {
+  0%   { top: 0%; }
+  100% { top: 100%; }
+}
+
+.scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(139,92,246,0.5), transparent);
+  animation: scanLine 3s linear infinite;
+  pointer-events: none;
+}
+
+/* =========================================
+   PROCESSING SHIMMER
+   ========================================= */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(139,92,246,0.0) 0%,
+    rgba(139,92,246,0.15) 50%,
+    rgba(139,92,246,0.0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+/* =========================================
+   COUNT-UP STAT NUMBER
+   ========================================= */
+.stat-number {
+  font-family: 'Orbitron', monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+/* =========================================
+   SCROLLBARS
+   ========================================= */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: #23283a;
+  background: rgba(139,92,246,0.3);
   border-radius: 9999px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #3b425b;
+  background: rgba(139,92,246,0.55);
 }
 
-/* Subtle pulse wave animations */
-@keyframes voiceRipple {
-  0% {
-    transform: scale(0.95);
-    opacity: 0.8;
-  }
-  50% {
-    transform: scale(1.15);
-    opacity: 0.3;
-  }
-  100% {
-    transform: scale(0.95);
-    opacity: 0.8;
-  }
+/* =========================================
+   CARD HOVER LIFT
+   ========================================= */
+.card-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px -12px rgba(139,92,246,0.25);
+}
+
+/* =========================================
+   SYNTAX HIGHLIGHT COLORS
+   ========================================= */
+.token-keyword  { color: #c084fc; }
+.token-string   { color: #86efac; }
+.token-function { color: #67e8f9; }
+.token-comment  { color: #6b7280; font-style: italic; }
+.token-number   { color: #fbbf24; }
+.token-operator { color: #f472b6; }
+
+/* =========================================
+   HERO MESH GRADIENT
+   ========================================= */
+.mesh-gradient {
+  background:
+    radial-gradient(ellipse 70% 60% at 10% 20%, rgba(139, 92, 246, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 80%, rgba(6, 182, 212, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(168, 85, 247, 0.08) 0%, transparent 70%);
+}
+
+/* =========================================
+   MISC UTILITIES
+   ========================================= */
+.text-balance {
+  text-wrap: balance;
 }
 
 .animate-voice-ripple {
-  animation: voiceRipple 2s infinite ease-in-out;
+  animation: micRing 2s infinite ease-in-out;
 }
