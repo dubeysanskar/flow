@@ -26,10 +26,18 @@ This project was built for the **Wispr Flow Shortlisting Task** (Hackathon Submi
 
 ### 1. 🎤 Hands-Free Voice Dictation & Command Terminal
 * Integrated real-time Web Speech recognition and Wispr Flow voice simulation.
-* Dynamic animated neon frequency equalizer that reacts to microphone activity.
-* Speak naturally (e.g., *"Create an audio visualizer component with glowing neon violet bars"*) and watch formatted React/TypeScript code synthesize in real-time.
+* Canvas Web Audio API oscilloscope with dynamic waveform and reactive frequency bars.
+* Natural language intent parsing: automatically classifies dictation into TSX React Components, Sprint Tasks, REST API Routes, or Teleprompter Prompts.
 
-### 2. 🗄️ Turso LibSQL & SQLite Engine
+### 2. ⚡ ⌘K Command Palette
+* Instant fuzzy search and keyboard shortcut navigation (`⌘K` or `Ctrl+K`).
+* Trigger voice synthesis presets, navigate database tools, switch views, and export project state.
+
+### 3. 🔥 52-Week Voice Activity Heatmap & Streaks
+* GitHub-style annual contribution matrix with 5 activity intensity tiers.
+* Real-time calculation of active voice streaks, words spoken per day, and audio recording seconds.
+
+### 4. 🗄️ Turso LibSQL & SQLite Dual Engine
 * Powered by `@libsql/client` — works seamlessly across both:
   * **Local Development:** Zero-setup local SQLite file (`file:wispr_flow.db`).
   * **Production (Vercel):** Remote Turso Cloud Database (`libsql://...`).
@@ -38,16 +46,20 @@ This project was built for the **Wispr Flow Shortlisting Task** (Hackathon Submi
   * `voice_sessions`: Logs spoken transcripts, word counts, and voice development seconds.
   * `hackathon_metrics`: Real-time audit metrics proving voice-driven development.
 
-### 3. 🎬 Interactive Demo Video Recording Teleprompter
-* Built-in teleprompter modal with adjustable scrolling speed and reset controls.
+### 5. 💾 Export Center (JSON, TypeScript, Markdown)
+* Client-side and server-side export pipeline (`/api/export`).
+* Download complete SQLite flow archives as structured JSON bundles, TypeScript barrel modules with interfaces, or readable Markdown audit reports.
+
+### 6. 🎉 Confetti Celebrations & Toast Notifications
+* Dependency-free multi-shape canvas confetti burst system on voice synthesis success.
+* Animated status toasts for database mutations, star toggles, and voice events.
+
+### 7. 🎬 Interactive Demo Video Recording Teleprompter
+* Built-in teleprompter modal with adjustable scrolling speed and pause/reset controls.
 * Curated step-by-step spoken script guide specifically tailored for recording the required demo video submission with Wispr Flow.
 
-### 4. 📊 Hackathon Audit Metrics & Voice History
-* Live counters tracking total voice development minutes logged, words spoken, and flows synthesized.
-* Full audit trail of voice sessions stored in SQLite to prove hands-off keyboard development.
-
-### 5. 🚀 Vercel Ready (`vercel.json`)
-* Native `vercel.json` included with serverless function timeouts, custom CORS headers, and multi-region deployment.
+### 8. 🚀 Vercel Ready (`vercel.json`)
+* Native `vercel.json` included with serverless function timeouts, custom CORS headers, and edge multi-region deployment.
 
 ---
 

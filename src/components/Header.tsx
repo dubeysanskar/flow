@@ -1,13 +1,15 @@
 "use client";
 
 import React from "react";
-import { Mic, Database, ExternalLink, Sparkles, CheckCircle2, Github, Video } from "lucide-react";
+import { Mic, Database, ExternalLink, Sparkles, CheckCircle2, Github, Video, Command, Download } from "lucide-react";
 
 interface HeaderProps {
   dbMode: { mode: "turso" | "sqlite"; url: string };
   onOpenDbModal: () => void;
   onOpenTeleprompter: () => void;
   onOpenSubmissionModal: () => void;
+  onOpenCommandPalette?: () => void;
+  onOpenExport?: () => void;
 }
 
 export function Header({
@@ -15,6 +17,8 @@ export function Header({
   onOpenDbModal,
   onOpenTeleprompter,
   onOpenSubmissionModal,
+  onOpenCommandPalette,
+  onOpenExport,
 }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 w-full glass-panel border-b border-surface-border">
@@ -68,7 +72,31 @@ export function Header({
         </div>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          {/* Command Palette Trigger */}
+          {onOpenCommandPalette && (
+            <button
+              onClick={onOpenCommandPalette}
+              className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-mono bg-surface-card hover:bg-surface-highlight border border-surface-border hover:border-violet-500/40 text-zinc-400 hover:text-zinc-200 transition-all"
+              title="Open Command Palette (⌘K)"
+            >
+              <Command className="w-3.5 h-3.5 text-violet-400" />
+              <span>⌘K</span>
+            </button>
+          )}
+
+          {/* Export Center Trigger */}
+          {onOpenExport && (
+            <button
+              onClick={onOpenExport}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-surface-card hover:bg-surface-highlight border border-surface-border hover:border-cyan-500/40 text-zinc-300 transition-all"
+              title="Export database to JSON / TS / Markdown"
+            >
+              <Download className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="hidden sm:inline">Export</span>
+            </button>
+          )}
+
           <button
             onClick={onOpenTeleprompter}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-zinc-800/80 hover:bg-zinc-700/80 text-zinc-200 border border-zinc-700 transition-all"
@@ -100,3 +128,4 @@ export function Header({
     </header>
   );
 }
+

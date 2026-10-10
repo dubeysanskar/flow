@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ToastProvider } from "@/components/Toast";
 
 export const metadata: Metadata = {
   title: "Wispr Flow Studio | Voice-Driven Dev Workspace & Turso SQLite Engine",
@@ -34,8 +35,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className="min-h-screen bg-[#090a0f] text-zinc-100 antialiased selection:bg-violet-500/30 selection:text-violet-200">
-        {children}
+        <ToastProvider>{children}</ToastProvider>
       </body>
     </html>
   );
 }
+

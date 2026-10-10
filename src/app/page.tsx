@@ -8,9 +8,15 @@ import { FlowCard, FlowItem } from "@/components/FlowCard";
 import { TeleprompterModal } from "@/components/TeleprompterModal";
 import { DatabaseModal } from "@/components/DatabaseModal";
 import { SubmissionModal } from "@/components/SubmissionModal";
+import { CommandPalette } from "@/components/CommandPalette";
+import { ExportModal } from "@/components/ExportModal";
+import { ActivityHeatmap } from "@/components/ActivityHeatmap";
+import { ConfettiCanvas } from "@/components/ConfettiCanvas";
+import { useToast } from "@/components/Toast";
 import {
   Mic, Search, Sparkles, Layers, History, Clock,
   ArrowRight, ExternalLink, Star, ChevronRight, Database, Cpu, Radio,
+  Flame, Download, Command,
 } from "lucide-react";
 
 // ── Animated hero title with rotating words ──────────────────────────────────
@@ -132,6 +138,7 @@ function AnimatedHero({ onOpenTeleprompter, onOpenDbModal, dbMode }: {
 }
 
 export default function HomePage() {
+  const { success, error, info, voice } = useToast();
   const [flows, setFlows] = useState<FlowItem[]>([]);
   const [stats, setStats] = useState({
     totalFlows: 4,
@@ -147,7 +154,7 @@ export default function HomePage() {
   });
   const [sessions, setSessions] = useState<any[]>([]);
 
-  const [activeTab, setActiveTab] = useState<"flows" | "sessions">("flows");
+  const [activeTab, setActiveTab] = useState<"flows" | "sessions" | "activity">("flows");
   const [typeFilter, setTypeFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [onlyStarred, setOnlyStarred] = useState(false);
@@ -156,6 +163,26 @@ export default function HomePage() {
   const [isTeleprompterOpen, setIsTeleprompterOpen] = useState(false);
   const [isDbModalOpen, setIsDbModalOpen] = useState(false);
   const [isSubmissionModalOpen, setIsSubmissionModalOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [confettiTrigger, setConfettiTrigger] = useState(false);
+
+  const triggerConfetti = () => {
+    setConfettiTrigger(true);
+    setTimeout(() => setConfettiTrigger(false), 2500);
+  };
+
+  // Keyboard shortcut for Command Palette ⌘K / Ctrl+K
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const fetchFlows = useCallback(async () => {
     try {
@@ -200,6 +227,31 @@ export default function HomePage() {
 
   useEffect(() => { refreshAll(); }, [refreshAll]);
 
+  const handleSynthesizePreset = async (promptText: string) => {
+    try {
+      info("Synthesizing prompt...", promptText.slice(0, 48) + "...");
+      const res = await fetch("/api/synthesize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          transcript: promptText,
+          durationSec: 15,
+          mode: "code",
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        triggerConfetti();
+        voice("Voice Synthesis Complete!", `Persisted "${data.flow.title}" to SQLite`);
+        await refreshAll();
+      } else {
+        error("Synthesis failed", data.error || "Unknown error");
+      }
+    } catch (err: any) {
+      error("Network error", err.message);
+    }
+  };
+
   const handleToggleStar = async (id: string, currentStarred: boolean) => {
     try {
       const res = await fetch(`/api/flows/${id}`, {
@@ -210,8 +262,11 @@ export default function HomePage() {
       if (res.ok) {
         setFlows((prev) => prev.map((f) => f.id === id ? { ...f, isStarred: !currentStarred } : f));
         fetchStats();
+        success(!currentStarred ? "Starred Flow" : "Unstarred Flow");
       }
-    } catch {}
+    } catch {
+      error("Failed to update star");
+    }
   };
 
   const handleToggleStatus = async (id: string, currentStatus: string) => {
@@ -225,8 +280,11 @@ export default function HomePage() {
       if (res.ok) {
         setFlows((prev) => prev.map((f) => f.id === id ? { ...f, status: nextStatus } : f));
         fetchStats();
+        info(`Status updated to ${nextStatus}`);
       }
-    } catch {}
+    } catch {
+      error("Failed to update status");
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -236,8 +294,11 @@ export default function HomePage() {
       if (res.ok) {
         setFlows((prev) => prev.filter((f) => f.id !== id));
         fetchStats();
+        info("Flow deleted from database");
       }
-    } catch {}
+    } catch {
+      error("Failed to delete flow");
+    }
   };
 
   const filteredFlows = flows.filter((f) => {
@@ -252,6 +313,8 @@ export default function HomePage() {
         onOpenDbModal={() => setIsDbModalOpen(true)}
         onOpenTeleprompter={() => setIsTeleprompterOpen(true)}
         onOpenSubmissionModal={() => setIsSubmissionModalOpen(true)}
+        onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+        onOpenExport={() => setIsExportModalOpen(true)}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -266,13 +329,19 @@ export default function HomePage() {
         <StatsBar metrics={stats} dbMode={dbMode} onOpenDbModal={() => setIsDbModalOpen(true)} />
 
         {/* Voice Terminal */}
-        <VoiceMicBar onFlowCreated={refreshAll} />
+        <VoiceMicBar
+          onFlowCreated={() => {
+            triggerConfetti();
+            voice("New Flow Synthesized!", "Persisted securely in SQLite database.");
+            refreshAll();
+          }}
+        />
 
         {/* Flow Explorer */}
         <div className="space-y-5">
           {/* Tab header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-surface-border/60">
-            <div className="flex items-center gap-1 bg-surface-card border border-surface-border rounded-xl p-1">
+            <div className="flex items-center gap-1 bg-surface-card border border-surface-border rounded-xl p-1 flex-wrap">
               <button
                 onClick={() => setActiveTab("flows")}
                 className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
@@ -301,6 +370,18 @@ export default function HomePage() {
                 <span className="px-1.5 py-0.5 rounded-md bg-surface-highlight text-zinc-400 text-[10px] font-mono">
                   {sessions.length}
                 </span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("activity")}
+                className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  activeTab === "activity"
+                    ? "bg-violet-600/20 text-violet-200 border border-violet-500/35 shadow-sm"
+                    : "text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                <Flame className="w-3.5 h-3.5 text-amber-400" />
+                Voice Heatmap & Streaks
               </button>
             </div>
 
@@ -339,6 +420,15 @@ export default function HomePage() {
                 >
                   <Star className={`w-3.5 h-3.5 ${onlyStarred ? "fill-amber-400" : ""}`} />
                   <span>Starred</span>
+                </button>
+
+                <button
+                  onClick={() => setIsExportModalOpen(true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-surface-card text-zinc-300 border border-surface-border hover:border-cyan-500/40 hover:text-cyan-300 transition-all"
+                  title="Export Database to JSON, TypeScript, Markdown"
+                >
+                  <Download className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Export</span>
                 </button>
               </div>
             )}
@@ -426,6 +516,11 @@ export default function HomePage() {
               )}
             </div>
           )}
+
+          {/* Activity Heatmap Tab */}
+          {activeTab === "activity" && (
+            <ActivityHeatmap sessions={sessions} flows={flows} />
+          )}
         </div>
       </main>
 
@@ -440,6 +535,13 @@ export default function HomePage() {
             <span>Next.js 14 · Turso LibSQL · Vercel</span>
           </div>
           <div className="flex items-center gap-4">
+            <button
+              onClick={() => setIsCommandPaletteOpen(true)}
+              className="hover:text-white transition-colors flex items-center gap-1 text-zinc-400"
+            >
+              <Command className="w-3 h-3 text-violet-400" />
+              <span>Command Palette (⌘K)</span>
+            </button>
             <a href="https://github.com/dubeysanskar/flow" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1">
               <ChevronRight className="w-3 h-3" />dubeysanskar/flow
             </a>
@@ -450,9 +552,29 @@ export default function HomePage() {
         </div>
       </footer>
 
+      {/* Modals & Overlays */}
       <TeleprompterModal isOpen={isTeleprompterOpen} onClose={() => setIsTeleprompterOpen(false)} />
       <DatabaseModal isOpen={isDbModalOpen} onClose={() => setIsDbModalOpen(false)} dbMode={dbMode} />
       <SubmissionModal isOpen={isSubmissionModalOpen} onClose={() => setIsSubmissionModalOpen(false)} />
+      <ExportModal
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        flowCount={flows.length}
+        sessionCount={sessions.length}
+      />
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onSynthesizePreset={handleSynthesizePreset}
+        onOpenTeleprompter={() => setIsTeleprompterOpen(true)}
+        onOpenDbModal={() => setIsDbModalOpen(true)}
+        onOpenExport={() => setIsExportModalOpen(true)}
+        onOpenSubmission={() => setIsSubmissionModalOpen(true)}
+        onOpenShortcuts={() => setIsCommandPaletteOpen(true)}
+        onToggleTab={(t) => setActiveTab(t)}
+      />
+      <ConfettiCanvas trigger={confettiTrigger} />
     </div>
   );
 }
+
