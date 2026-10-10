@@ -60,14 +60,15 @@ export function Header({
           {/* Database Engine Pill */}
           <button
             onClick={onOpenDbModal}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface-card hover:bg-surface-highlight border border-surface-border text-zinc-300 transition-all hover:border-violet-500/50"
-            title="Inspect Database status and Turso/SQLite configuration"
+            className="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-950/40 hover:bg-emerald-900/40 border border-emerald-500/30 text-emerald-200 transition-all hover:border-emerald-500/60 shadow-sm"
+            title="Backend Connected: Click to inspect database and configure Turso DB"
           >
-            <Database className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="capitalize">
-              {dbMode.mode === "turso" ? "Turso Cloud DB" : "SQLite Local"}
-            </span>
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <Database className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="font-mono text-[11px]">
+              {dbMode.mode === "turso" ? "Turso Cloud" : "SQLite Local"}
+            </span>
+            <span className="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider">Connected</span>
           </button>
         </div>
 

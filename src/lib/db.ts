@@ -33,6 +33,25 @@ export function getDbMode(): { mode: "turso" | "sqlite"; url: string } {
   return { mode: "sqlite", url: "file:wispr_flow.db" };
 }
 
+export function setDbConnection(url?: string, authToken?: string): Client {
+  if (url && (url.startsWith("libsql://") || url.startsWith("https://") || url.startsWith("http://"))) {
+    process.env.TURSO_DATABASE_URL = url;
+    if (authToken) process.env.TURSO_AUTH_TOKEN = authToken;
+    cachedClient = createClient({
+      url,
+      authToken: authToken || undefined,
+    });
+  } else {
+    delete process.env.TURSO_DATABASE_URL;
+    delete process.env.TURSO_AUTH_TOKEN;
+    cachedClient = createClient({
+      url: "file:wispr_flow.db",
+    });
+  }
+  isInitialized = false;
+  return cachedClient;
+}
+
 export async function ensureDbInitialized(): Promise<void> {
   if (isInitialized) return;
   const db = getDb();

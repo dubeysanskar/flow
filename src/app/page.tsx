@@ -104,11 +104,12 @@ function AnimatedHero({ onOpenTeleprompter, onOpenDbModal, dbMode }: {
 
             <button
               onClick={onOpenDbModal}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white bg-[#060710] border border-surface-border hover:border-violet-500/30 transition-all"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm text-zinc-300 hover:text-white bg-[#060710] border border-surface-border hover:border-emerald-500/40 transition-all"
             >
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               <Database className="w-4 h-4 text-cyan-400" />
               <span className="font-mono text-xs">{dbMode.mode === "turso" ? "Turso Cloud" : "SQLite Local"}</span>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">Connected</span>
             </button>
           </div>
         </div>
@@ -554,7 +555,12 @@ export default function HomePage() {
 
       {/* Modals & Overlays */}
       <TeleprompterModal isOpen={isTeleprompterOpen} onClose={() => setIsTeleprompterOpen(false)} />
-      <DatabaseModal isOpen={isDbModalOpen} onClose={() => setIsDbModalOpen(false)} dbMode={dbMode} />
+      <DatabaseModal
+        isOpen={isDbModalOpen}
+        onClose={() => setIsDbModalOpen(false)}
+        dbMode={dbMode}
+        onConnectionChange={refreshAll}
+      />
       <SubmissionModal isOpen={isSubmissionModalOpen} onClose={() => setIsSubmissionModalOpen(false)} />
       <ExportModal
         isOpen={isExportModalOpen}
