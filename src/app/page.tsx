@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { Header } from "@/components/Header";
-import { StatsBar } from "@/components/StatsBar";
 import { VoiceMicBar } from "@/components/VoiceMicBar";
 import { FlowCard, FlowItem } from "@/components/FlowCard";
 import { TeleprompterModal } from "@/components/TeleprompterModal";
@@ -14,129 +13,10 @@ import { ActivityHeatmap } from "@/components/ActivityHeatmap";
 import { ConfettiCanvas } from "@/components/ConfettiCanvas";
 import { useToast } from "@/components/Toast";
 import {
-  Mic, Search, Sparkles, Layers, History, Clock,
-  ArrowRight, ExternalLink, Star, ChevronRight, Database, Cpu, Radio,
-  Flame, Download, Command,
+  Mic, Search, Layers, History, Clock,
+  Star, Database, Server, RefreshCw, Flame, Download,
+  SlidersHorizontal, CheckCircle2,
 } from "lucide-react";
-
-// ── Animated hero title with rotating words ──────────────────────────────────
-const ROTATING_WORDS = ["Components", "APIs", "Tasks", "Schemas", "Scripts", "Flows"];
-
-function AnimatedHero({ onOpenTeleprompter, onOpenDbModal, dbMode }: {
-  onOpenTeleprompter: () => void;
-  onOpenDbModal: () => void;
-  dbMode: { mode: string; url: string };
-}) {
-  const [wordIndex, setWordIndex] = useState(0);
-  const [visible, setVisible] = useState(true);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setVisible(false);
-      setTimeout(() => {
-        setWordIndex((i) => (i + 1) % ROTATING_WORDS.length);
-        setVisible(true);
-      }, 300);
-    }, 2200);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div className="relative overflow-hidden rounded-3xl border border-surface-border glass-panel shadow-2xl mesh-gradient">
-      {/* Orb decorations */}
-      <div className="absolute -top-24 -right-24 w-96 h-96 bg-violet-600/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-48 bg-indigo-600/5 rounded-full blur-3xl pointer-events-none" />
-
-      {/* Scanning line accent */}
-      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
-
-      <div className="relative z-10 p-6 sm:p-10 lg:p-14 flex flex-col lg:flex-row items-start lg:items-center gap-10">
-        {/* Left: Text */}
-        <div className="flex-1 max-w-2xl">
-          <div className="flex flex-wrap items-center gap-2 mb-5">
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-600/15 border border-violet-500/30 text-violet-300 text-xs font-semibold">
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              Wispr Flow Shortlisting Task
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-300 text-xs font-semibold">
-              <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse" />
-              Deadline: Oct 10 · 11:59 PM
-            </span>
-          </div>
-
-          <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.1] text-balance">
-            <span className="text-white">Voice-Dictate</span>
-            <br />
-            <span className="gradient-text text-glow-violet">
-              {ROTATING_WORDS[wordIndex]}
-            </span>
-            <br />
-            <span className="text-zinc-300 text-2xl sm:text-3xl lg:text-4xl font-bold">to SQLite in Real-Time.</span>
-          </h1>
-
-          <p className="mt-4 text-sm sm:text-base text-zinc-400 leading-relaxed max-w-xl">
-            Open your mic, speak naturally with <strong className="text-violet-300">Wispr Flow</strong>, and
-            watch your words transform into production-ready React components, Turso LibSQL schemas,
-            sprint tasks, and API routes — all persisted in real-time to SQLite.
-          </p>
-
-          {/* CTA buttons */}
-          <div className="mt-7 flex flex-wrap items-center gap-3">
-            <a
-              href="https://ref.wisprflow.ai/hhg"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-xl shadow-violet-600/30 transition-all hover:scale-105 active:scale-95"
-            >
-              <Mic className="w-4 h-4" />
-              <span>Get Wispr Flow (Referral)</span>
-              <ExternalLink className="w-3.5 h-3.5 opacity-70 group-hover:opacity-100" />
-            </a>
-
-            <button
-              onClick={onOpenTeleprompter}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-surface-card hover:bg-surface-highlight border border-surface-border text-zinc-100 hover:border-violet-500/40 transition-all"
-            >
-              <span>Video Script</span>
-              <ArrowRight className="w-4 h-4 text-violet-400" />
-            </button>
-
-            <button
-              onClick={onOpenDbModal}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm text-zinc-300 hover:text-white bg-[#060710] border border-surface-border hover:border-emerald-500/40 transition-all"
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <Database className="w-4 h-4 text-cyan-400" />
-              <span className="font-mono text-xs">{dbMode.mode === "turso" ? "Turso Cloud" : "SQLite Local"}</span>
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">Connected</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Right: Stats / Feature pills */}
-        <div className="flex flex-col gap-3 lg:min-w-64">
-          {[
-            { icon: Radio, color: "text-violet-400", bg: "bg-violet-500/10 border-violet-500/20", label: "Wispr Flow Web Speech Engine", sub: "Real-time voice transcription" },
-            { icon: Database, color: "text-cyan-400", bg: "bg-cyan-500/10 border-cyan-500/20", label: "Turso Cloud + SQLite Local", sub: "@libsql/client dual-mode" },
-            { icon: Cpu, color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20", label: "Canvas Audio Oscilloscope", sub: "Web Audio API waveform" },
-            { icon: Sparkles, color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/20", label: "AI Intent Detection", sub: "Auto-routes to TSX / Task / MD" },
-          ].map(({ icon: Icon, color, bg, label, sub }, i) => (
-            <div key={i} className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${bg} glass-card`}>
-              <div className={`p-2 rounded-lg ${bg.replace("border-", "bg-").split(" ")[0]} shrink-0`}>
-                <Icon className={`w-4 h-4 ${color}`} />
-              </div>
-              <div>
-                <div className="text-xs font-semibold text-white">{label}</div>
-                <div className="text-[11px] text-zinc-500 font-mono">{sub}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function HomePage() {
   const { success, error, info, voice } = useToast();
@@ -170,10 +50,9 @@ export default function HomePage() {
 
   const triggerConfetti = () => {
     setConfettiTrigger(true);
-    setTimeout(() => setConfettiTrigger(false), 2500);
+    setTimeout(() => setConfettiTrigger(false), 2200);
   };
 
-  // Keyboard shortcut for Command Palette ⌘K / Ctrl+K
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -243,7 +122,7 @@ export default function HomePage() {
       const data = await res.json();
       if (data.success) {
         triggerConfetti();
-        voice("Voice Synthesis Complete!", `Persisted "${data.flow.title}" to SQLite`);
+        voice("Voice Synthesis Complete", `Stored "${data.flow.title}" to SQLite`);
         await refreshAll();
       } else {
         error("Synthesis failed", data.error || "Unknown error");
@@ -308,7 +187,7 @@ export default function HomePage() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#060710] text-zinc-100">
+    <div className="min-h-screen flex flex-col bg-[#09090b] text-zinc-100 selection:bg-zinc-800">
       <Header
         dbMode={dbMode}
         onOpenDbModal={() => setIsDbModalOpen(true)}
@@ -318,236 +197,341 @@ export default function HomePage() {
         onOpenExport={() => setIsExportModalOpen(true)}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Hero */}
-        <AnimatedHero
-          onOpenTeleprompter={() => setIsTeleprompterOpen(true)}
-          onOpenDbModal={() => setIsDbModalOpen(true)}
-          dbMode={dbMode}
-        />
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+        {/* ── Studio Header & Metrics Strip ── */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-zinc-800/80">
+          <div>
+            <h1 className="text-xl font-semibold tracking-tight text-white flex items-center gap-2">
+              <span>Voice Development Studio</span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-zinc-800 text-zinc-300 border border-zinc-700">
+                v1.0
+              </span>
+            </h1>
+            <p className="text-xs text-zinc-400 mt-0.5">
+              100% voice-driven development with Wispr Flow · Real-time Turso LibSQL & SQLite persistence
+            </p>
+          </div>
 
-        {/* Stats */}
-        <StatsBar metrics={stats} dbMode={dbMode} onOpenDbModal={() => setIsDbModalOpen(true)} />
+          {/* Quick Metrics Strip */}
+          <div className="flex items-center gap-2 flex-wrap text-xs font-mono">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#121215] border border-zinc-800 text-zinc-300">
+              <span className="text-zinc-500">Flows:</span>
+              <span className="font-semibold text-white">{stats.totalFlows}</span>
+            </div>
 
-        {/* Voice Terminal */}
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#121215] border border-zinc-800 text-zinc-300">
+              <span className="text-zinc-500">Voice Time:</span>
+              <span className="font-semibold text-white">{stats.voiceDevMinutes}m</span>
+            </div>
+
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#121215] border border-zinc-800 text-zinc-300">
+              <span className="text-zinc-500">Words Dictated:</span>
+              <span className="font-semibold text-white">{stats.wordsSpoken.toLocaleString()}</span>
+            </div>
+
+            <button
+              onClick={() => setIsDbModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#121215] hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-300 transition-colors"
+              title="Click to configure Turso Cloud DB or test connection"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span className="text-zinc-400">{dbMode.mode === "turso" ? "turso:cloud" : "sqlite:local"}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* ── Voice Dictation Command Deck ── */}
         <VoiceMicBar
           onFlowCreated={() => {
             triggerConfetti();
-            voice("New Flow Synthesized!", "Persisted securely in SQLite database.");
+            voice("Flow Synthesized", "Stored in SQLite database.");
             refreshAll();
           }}
         />
 
-        {/* Flow Explorer */}
-        <div className="space-y-5">
-          {/* Tab header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-surface-border/60">
-            <div className="flex items-center gap-1 bg-surface-card border border-surface-border rounded-xl p-1 flex-wrap">
-              <button
-                onClick={() => setActiveTab("flows")}
-                className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  activeTab === "flows"
-                    ? "bg-violet-600/20 text-violet-200 border border-violet-500/35 shadow-sm"
-                    : "text-zinc-400 hover:text-zinc-200"
-                }`}
-              >
-                <Layers className="w-3.5 h-3.5 text-violet-400" />
-                Synthesized Flows
-                <span className="px-1.5 py-0.5 rounded-md bg-surface-highlight text-zinc-400 text-[10px] font-mono">
-                  {filteredFlows.length}
-                </span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab("sessions")}
-                className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  activeTab === "sessions"
-                    ? "bg-violet-600/20 text-violet-200 border border-violet-500/35 shadow-sm"
-                    : "text-zinc-400 hover:text-zinc-200"
-                }`}
-              >
-                <History className="w-3.5 h-3.5 text-cyan-400" />
-                Voice Log History
-                <span className="px-1.5 py-0.5 rounded-md bg-surface-highlight text-zinc-400 text-[10px] font-mono">
-                  {sessions.length}
-                </span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab("activity")}
-                className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  activeTab === "activity"
-                    ? "bg-violet-600/20 text-violet-200 border border-violet-500/35 shadow-sm"
-                    : "text-zinc-400 hover:text-zinc-200"
-                }`}
-              >
-                <Flame className="w-3.5 h-3.5 text-amber-400" />
-                Voice Heatmap & Streaks
-              </button>
-            </div>
-
-            {activeTab === "flows" && (
-              <div className="flex items-center gap-2.5 flex-wrap">
-                <div className="relative">
-                  <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search flows..."
-                    className="pl-8 pr-3 py-1.5 bg-surface-card border border-surface-border rounded-xl text-xs text-white focus:outline-none focus:border-violet-500/60 placeholder:text-zinc-600 w-36 sm:w-44 font-mono"
-                  />
-                </div>
-
-                <select
-                  value={typeFilter}
-                  onChange={(e) => setTypeFilter(e.target.value)}
-                  className="bg-surface-card border border-surface-border rounded-xl text-xs text-zinc-300 px-3 py-1.5 focus:outline-none focus:border-violet-500/60 cursor-pointer font-mono"
-                >
-                  <option value="all">All Types</option>
-                  <option value="component">TSX Components</option>
-                  <option value="task">Sprint Tasks</option>
-                  <option value="snippet">Code Snippets</option>
-                  <option value="prompt">Demo Scripts</option>
-                </select>
-
+        {/* ── 2-Column Developer Layout ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Main Area: Flow List & Logs (8 cols) */}
+          <div className="lg:col-span-8 space-y-4">
+            {/* View Switcher & Toolbar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-800/80">
+              <div className="flex items-center gap-1 bg-zinc-900 border border-zinc-800 rounded-lg p-0.5">
                 <button
-                  onClick={() => setOnlyStarred(!onlyStarred)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
-                    onlyStarred
-                      ? "bg-amber-500/15 text-amber-300 border-amber-500/35"
-                      : "bg-surface-card text-zinc-400 border-surface-border hover:border-amber-500/25 hover:text-amber-400"
+                  onClick={() => setActiveTab("flows")}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                    activeTab === "flows"
+                      ? "bg-zinc-800 text-white font-semibold shadow-sm"
+                      : "text-zinc-400 hover:text-zinc-200"
                   }`}
                 >
-                  <Star className={`w-3.5 h-3.5 ${onlyStarred ? "fill-amber-400" : ""}`} />
-                  <span>Starred</span>
+                  <Layers className="w-3.5 h-3.5 text-zinc-400" />
+                  <span>Synthesized Flows</span>
+                  <span className="px-1.5 py-0.2 rounded bg-zinc-950 text-zinc-400 text-[10px] font-mono">
+                    {filteredFlows.length}
+                  </span>
                 </button>
 
                 <button
-                  onClick={() => setIsExportModalOpen(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-surface-card text-zinc-300 border border-surface-border hover:border-cyan-500/40 hover:text-cyan-300 transition-all"
-                  title="Export Database to JSON, TypeScript, Markdown"
+                  onClick={() => setActiveTab("sessions")}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                    activeTab === "sessions"
+                      ? "bg-zinc-800 text-white font-semibold shadow-sm"
+                      : "text-zinc-400 hover:text-zinc-200"
+                  }`}
                 >
-                  <Download className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>Export</span>
+                  <History className="w-3.5 h-3.5 text-zinc-400" />
+                  <span>Audit Log</span>
+                  <span className="px-1.5 py-0.2 rounded bg-zinc-950 text-zinc-400 text-[10px] font-mono">
+                    {sessions.length}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab("activity")}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                    activeTab === "activity"
+                      ? "bg-zinc-800 text-white font-semibold shadow-sm"
+                      : "text-zinc-400 hover:text-zinc-200"
+                  }`}
+                >
+                  <Flame className="w-3.5 h-3.5 text-zinc-400" />
+                  <span>Heatmap</span>
                 </button>
               </div>
+
+              {activeTab === "flows" && (
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="relative">
+                    <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Filter flows..."
+                      className="pl-8 pr-2.5 py-1 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-zinc-200 focus:outline-none focus:border-zinc-600 placeholder:text-zinc-500 w-36 sm:w-44 font-mono"
+                    />
+                  </div>
+
+                  <select
+                    value={typeFilter}
+                    onChange={(e) => setTypeFilter(e.target.value)}
+                    className="bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-zinc-300 px-2.5 py-1 focus:outline-none focus:border-zinc-600 font-mono"
+                  >
+                    <option value="all">All Types</option>
+                    <option value="component">TSX Components</option>
+                    <option value="task">Sprint Tasks</option>
+                    <option value="snippet">REST Routes</option>
+                    <option value="prompt">Teleprompter</option>
+                  </select>
+
+                  <button
+                    onClick={() => setOnlyStarred(!onlyStarred)}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs border transition-colors ${
+                      onlyStarred
+                        ? "bg-amber-950/40 text-amber-300 border-amber-600/40 font-medium"
+                        : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200"
+                    }`}
+                  >
+                    <Star className={`w-3 h-3 ${onlyStarred ? "fill-amber-400 text-amber-400" : ""}`} />
+                    <span>Starred</span>
+                  </button>
+
+                  <button
+                    onClick={() => setIsExportModalOpen(true)}
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs bg-zinc-900 text-zinc-300 border border-zinc-800 hover:bg-zinc-800 hover:text-white transition-colors"
+                    title="Export Database to JSON / TypeScript"
+                  >
+                    <Download className="w-3 h-3 text-zinc-400" />
+                    <span>Export</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Flows Grid */}
+            {activeTab === "flows" && (
+              <>
+                {isLoading ? (
+                  <div className="py-20 flex flex-col items-center justify-center gap-3 border border-zinc-800 rounded-xl bg-[#111114]">
+                    <div className="w-5 h-5 rounded-full border-2 border-zinc-700 border-t-white animate-spin" />
+                    <span className="text-xs text-zinc-500 font-mono">Querying SQLite database...</span>
+                  </div>
+                ) : filteredFlows.length === 0 ? (
+                  <div className="border border-zinc-800 rounded-xl p-12 text-center bg-[#111114]">
+                    <div className="w-10 h-10 mx-auto mb-3 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-500">
+                      <Mic className="w-5 h-5" />
+                    </div>
+                    <h3 className="text-sm font-medium text-white">No flows found</h3>
+                    <p className="text-xs text-zinc-400 mt-1 max-w-sm mx-auto">
+                      Dictate a voice command or click a quick preset in the command bar above.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-3">
+                    {filteredFlows.map((flow) => (
+                      <FlowCard
+                        key={flow.id}
+                        flow={flow}
+                        onToggleStar={handleToggleStar}
+                        onToggleStatus={handleToggleStatus}
+                        onDelete={handleDelete}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Sessions Table */}
+            {activeTab === "sessions" && (
+              <div className="rounded-xl border border-zinc-800 overflow-hidden bg-[#111114]">
+                <div className="px-4 py-3 bg-zinc-900/60 border-b border-zinc-800 flex items-center justify-between text-xs">
+                  <div>
+                    <span className="font-medium text-white">Voice Dictation Audit Trail</span>
+                    <p className="text-[11px] text-zinc-500 mt-0.5">
+                      Session transcripts logged to SQLite to verify 100% voice-driven engineering
+                    </p>
+                  </div>
+                  <span className="font-mono text-zinc-400 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded">
+                    {sessions.length} entries
+                  </span>
+                </div>
+
+                {sessions.length === 0 ? (
+                  <div className="py-10 text-center text-xs text-zinc-500 font-mono">
+                    No sessions recorded yet
+                  </div>
+                ) : (
+                  <div className="divide-y divide-zinc-800/60">
+                    {sessions.map((sess, i) => (
+                      <div key={sess.id} className="p-4 hover:bg-zinc-900/40 transition-colors">
+                        <div className="flex items-center justify-between gap-3 mb-1.5">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-xs text-zinc-600 w-4 text-right">{i + 1}.</span>
+                            <span className="text-xs font-semibold text-white">{sess.title}</span>
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-zinc-800 text-zinc-300 border border-zinc-700">
+                              {sess.actionType}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-3 text-[11px] text-zinc-500 font-mono">
+                            <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{sess.durationSec}s</span>
+                            <span>{sess.wordsCount}w</span>
+                          </div>
+                        </div>
+                        <div className="ml-6 font-mono text-xs text-zinc-300 bg-zinc-950 p-2.5 rounded-lg border border-zinc-800/80 leading-relaxed">
+                          <span className="text-zinc-600 select-none">▸ </span>"{sess.transcript}"
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Heatmap Tab */}
+            {activeTab === "activity" && (
+              <ActivityHeatmap sessions={sessions} flows={flows} />
             )}
           </div>
 
-          {/* Flows Grid */}
-          {activeTab === "flows" && (
-            <>
-              {isLoading ? (
-                <div className="py-24 flex flex-col items-center gap-4">
-                  <div className="relative w-10 h-10">
-                    <div className="absolute inset-0 rounded-full border-2 border-violet-500/20 animate-ping" />
-                    <div className="absolute inset-0 rounded-full border-2 border-violet-500/30 border-t-violet-500 animate-spin" />
-                  </div>
-                  <p className="text-xs text-zinc-500 font-mono">querying libsql database...</p>
-                </div>
-              ) : filteredFlows.length === 0 ? (
-                <div className="glass-card holo-card rounded-2xl p-14 text-center">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-violet-600/10 border border-violet-500/20 flex items-center justify-center">
-                    <Mic className="w-8 h-8 text-violet-400 opacity-60" />
-                  </div>
-                  <h3 className="text-base font-semibold text-white">No flows found</h3>
-                  <p className="text-xs text-zinc-400 mt-2 max-w-xs mx-auto">
-                    Dictate a command above or click a quick preset to synthesize your first flow and store it in SQLite.
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {filteredFlows.map((flow) => (
-                    <FlowCard
-                      key={flow.id}
-                      flow={flow}
-                      onToggleStar={handleToggleStar}
-                      onToggleStatus={handleToggleStatus}
-                      onDelete={handleDelete}
-                    />
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Sessions Table */}
-          {activeTab === "sessions" && (
-            <div className="rounded-2xl border border-surface-border overflow-hidden glass-card">
-              <div className="px-5 py-3.5 bg-surface-card border-b border-surface-border flex items-center justify-between">
-                <div>
-                  <div className="text-sm font-semibold text-white">Voice Dictation Audit Log</div>
-                  <div className="text-[11px] text-zinc-500 font-mono mt-0.5">
-                    Cryptographic proof of 100% voice-driven development for hackathon submission
-                  </div>
-                </div>
-                <span className="font-mono text-[11px] text-violet-400 bg-violet-500/10 border border-violet-500/20 px-2.5 py-1 rounded-lg">
-                  {sessions.length} sessions
+          {/* Sidebar: Inspector & Engine (4 cols) */}
+          <div className="lg:col-span-4 space-y-4">
+            {/* Database Engine Card */}
+            <div className="rounded-xl border border-zinc-800 bg-[#121215] p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-white flex items-center gap-2">
+                  <Database className="w-3.5 h-3.5 text-zinc-400" />
+                  <span>Database Engine</span>
+                </span>
+                <span className="flex items-center gap-1.5 text-[11px] font-mono text-emerald-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  Online
                 </span>
               </div>
 
-              {sessions.length === 0 ? (
-                <div className="py-12 text-center text-xs text-zinc-500 font-mono">
-                  No sessions yet — start dictating commands above
+              <div className="p-3 rounded-lg bg-zinc-950 border border-zinc-800 font-mono text-xs space-y-1.5 text-zinc-300">
+                <div className="flex justify-between">
+                  <span className="text-zinc-500">Driver:</span>
+                  <span>@libsql/client</span>
                 </div>
-              ) : (
-                <div className="divide-y divide-surface-border/40">
-                  {sessions.map((sess, i) => (
-                    <div key={sess.id} className="px-5 py-4 hover:bg-surface-card/30 transition-colors">
-                      <div className="flex items-center justify-between gap-3 mb-2">
-                        <div className="flex items-center gap-2.5">
-                          <span className="font-mono text-xs text-zinc-600 w-5 text-right shrink-0">{i + 1}.</span>
-                          <span className="text-sm font-medium text-white">{sess.title}</span>
-                          <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-violet-500/10 text-violet-300 border border-violet-500/20">
-                            {sess.actionType}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-3 text-[11px] text-zinc-500 font-mono shrink-0">
-                          <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{sess.durationSec}s</span>
-                          <span>{sess.wordsCount}w</span>
-                        </div>
-                      </div>
-                      <div className="ml-7 font-mono text-xs text-zinc-400 bg-[#040509] p-2.5 rounded-lg border border-surface-border/50 leading-relaxed">
-                        <span className="text-violet-600 select-none">▸ </span>"{sess.transcript}"
-                      </div>
-                    </div>
-                  ))}
+                <div className="flex justify-between">
+                  <span className="text-zinc-500">Mode:</span>
+                  <span className="capitalize">{dbMode.mode}</span>
                 </div>
-              )}
-            </div>
-          )}
+                <div className="flex justify-between">
+                  <span className="text-zinc-500">Target:</span>
+                  <span className="truncate max-w-[150px]" title={dbMode.url}>{dbMode.url}</span>
+                </div>
+              </div>
 
-          {/* Activity Heatmap Tab */}
-          {activeTab === "activity" && (
-            <ActivityHeatmap sessions={sessions} flows={flows} />
-          )}
+              <button
+                onClick={() => setIsDbModalOpen(true)}
+                className="w-full py-2 rounded-lg text-xs font-medium bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-200 transition-colors flex items-center justify-center gap-1.5"
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5 text-zinc-400" />
+                <span>Configure Turso / SQLite</span>
+              </button>
+            </div>
+
+            {/* Compact Contribution Activity */}
+            <div className="rounded-xl border border-zinc-800 bg-[#121215] p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-white flex items-center gap-2">
+                  <Flame className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Voice Contribution Activity</span>
+                </span>
+                <span className="text-[11px] font-mono text-zinc-500">52 Weeks</span>
+              </div>
+
+              <div className="overflow-x-auto">
+                <ActivityHeatmap sessions={sessions} flows={flows} />
+              </div>
+            </div>
+
+            {/* Quick Submission & Referral Verification Box */}
+            <div className="rounded-xl border border-zinc-800 bg-[#121215] p-4 space-y-3">
+              <span className="text-xs font-semibold text-white">Hackathon Task Submission</span>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                Account created via mandatory referral link:
+              </p>
+              <a
+                href="https://ref.wisprflow.ai/hhg"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block p-2.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-mono text-violet-300 hover:text-violet-200 hover:border-zinc-700 transition-colors truncate"
+              >
+                ref.wisprflow.ai/hhg
+              </a>
+
+              <button
+                onClick={() => setIsSubmissionModalOpen(true)}
+                className="w-full py-2 rounded-lg text-xs font-semibold bg-violet-600 hover:bg-violet-500 text-white transition-colors"
+              >
+                View Submission Checklist
+              </button>
+            </div>
+          </div>
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-surface-border mt-16 py-5 glass-panel">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-500 font-mono">
+      {/* ── Minimalist Footer ── */}
+      <footer className="border-t border-zinc-800/80 mt-12 py-4 bg-[#09090b]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-500 font-mono">
           <div className="flex items-center gap-3">
-            <span className="text-violet-400">wispr-flow-studio</span>
+            <span className="text-zinc-300">wispr-flow-studio</span>
             <span>·</span>
-            <a href="https://ref.wisprflow.ai/hhg" target="_blank" rel="noopener noreferrer" className="hover:text-violet-300 transition-colors">ref.wisprflow.ai/hhg</a>
+            <span>Turso LibSQL & SQLite</span>
             <span>·</span>
-            <span>Next.js 14 · Turso LibSQL · Vercel</span>
+            <a href="https://ref.wisprflow.ai/hhg" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300 transition-colors">
+              ref.wisprflow.ai/hhg
+            </a>
           </div>
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => setIsCommandPaletteOpen(true)}
-              className="hover:text-white transition-colors flex items-center gap-1 text-zinc-400"
-            >
-              <Command className="w-3 h-3 text-violet-400" />
-              <span>Command Palette (⌘K)</span>
+            <button onClick={() => setIsCommandPaletteOpen(true)} className="hover:text-zinc-300 transition-colors">
+              Command Palette (⌘K)
             </button>
-            <a href="https://github.com/dubeysanskar/flow" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1">
-              <ChevronRight className="w-3 h-3" />dubeysanskar/flow
-            </a>
-            <a href="https://forms.gle/Lv9wF8gYVHdEqfJW8" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-amber-400" />Submission Form
+            <a href="https://github.com/dubeysanskar/flow" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300 transition-colors">
+              dubeysanskar/flow
             </a>
           </div>
         </div>
@@ -583,4 +567,3 @@ export default function HomePage() {
     </div>
   );
 }
-

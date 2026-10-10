@@ -1,7 +1,10 @@
 "use client";
 
 import React from "react";
-import { Mic, Database, ExternalLink, Sparkles, CheckCircle2, Github, Video, Command, Download } from "lucide-react";
+import {
+  Mic, Database, ExternalLink, Sparkles, CheckCircle2,
+  Github, Video, Command, Download, GitBranch,
+} from "lucide-react";
 
 interface HeaderProps {
   dbMode: { mode: "turso" | "sqlite"; url: string };
@@ -21,106 +24,103 @@ export function Header({
   onOpenExport,
 }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-40 w-full glass-panel border-b border-surface-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand */}
+    <header className="sticky top-0 z-40 w-full bg-[#09090b]/95 backdrop-blur-md border-b border-zinc-800/80">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+        {/* Left: Brand & Repo Crumb */}
         <div className="flex items-center gap-3">
-          <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-cyan-500 shadow-lg shadow-violet-600/30">
-            <Mic className="w-5 h-5 text-white" />
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#090a0f] animate-ping" />
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#090a0f]" />
-          </div>
-
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-lg font-bold tracking-tight text-white">Wispr Flow</span>
-              <span className="px-2 py-0.5 text-[10px] font-semibold tracking-wider uppercase rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">
-                Studio
-              </span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-700/80 text-zinc-100 shadow-sm">
+              <Mic className="w-3.5 h-3.5 text-violet-400" />
             </div>
-            <p className="text-xs text-zinc-400 hidden sm:block">Voice-Driven Developer Command Center</p>
+            <div className="flex items-center gap-1.5">
+              <span className="font-semibold text-sm tracking-tight text-white">wispr</span>
+              <span className="text-zinc-600 font-mono text-xs">/</span>
+              <span className="font-medium text-xs text-zinc-300">flow</span>
+            </div>
           </div>
-        </div>
 
-        {/* Center / Action Badges */}
-        <div className="hidden md:flex items-center gap-2.5">
-          {/* Wispr Referral Pill */}
-          <a
-            href="https://ref.wisprflow.ai/hhg"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-violet-950/60 hover:bg-violet-900/60 border border-violet-500/40 text-violet-200 transition-all hover:scale-105 shadow-sm group"
-            title="Mandatory Hackathon Referral Link: ref.wisprflow.ai/hhg"
-          >
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 group-hover:rotate-12 transition-transform" />
-            <span>Wispr Referral Verified</span>
-            <ExternalLink className="w-3 h-3 opacity-60" />
-          </a>
+          <div className="hidden sm:flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-[11px] font-mono text-zinc-400">
+            <GitBranch className="w-3 h-3 text-zinc-500" />
+            <span>main</span>
+          </div>
 
           {/* Database Engine Pill */}
           <button
             onClick={onOpenDbModal}
-            className="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-950/40 hover:bg-emerald-900/40 border border-emerald-500/30 text-emerald-200 transition-all hover:border-emerald-500/60 shadow-sm"
-            title="Backend Connected: Click to inspect database and configure Turso DB"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-300 transition-colors"
+            title="Inspect Database status and Turso / SQLite connection"
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <Database className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="font-mono text-[11px]">
-              {dbMode.mode === "turso" ? "Turso Cloud" : "SQLite Local"}
-            </span>
-            <span className="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider">Connected</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span>{dbMode.mode === "turso" ? "turso-cloud" : "sqlite:local"}</span>
           </button>
         </div>
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-2 sm:gap-2.5">
-          {/* Command Palette Trigger */}
-          {onOpenCommandPalette && (
-            <button
-              onClick={onOpenCommandPalette}
-              className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-mono bg-surface-card hover:bg-surface-highlight border border-surface-border hover:border-violet-500/40 text-zinc-400 hover:text-zinc-200 transition-all"
-              title="Open Command Palette (⌘K)"
-            >
-              <Command className="w-3.5 h-3.5 text-violet-400" />
-              <span>⌘K</span>
-            </button>
-          )}
+        {/* Center: Command Palette Trigger */}
+        {onOpenCommandPalette && (
+          <button
+            onClick={onOpenCommandPalette}
+            className="hidden md:flex items-center gap-3 px-3 py-1.5 rounded-lg bg-zinc-900/90 hover:bg-zinc-800/90 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-400 hover:text-zinc-200 transition-all w-64 justify-between font-mono"
+          >
+            <span className="text-zinc-500 text-xs">Type a command or search...</span>
+            <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 border border-zinc-700 text-[10px] text-zinc-400">
+              ⌘K
+            </kbd>
+          </button>
+        )}
 
-          {/* Export Center Trigger */}
+        {/* Right Actions */}
+        <div className="flex items-center gap-2">
+          {/* Export */}
           {onOpenExport && (
             <button
               onClick={onOpenExport}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-surface-card hover:bg-surface-highlight border border-surface-border hover:border-cyan-500/40 text-zinc-300 transition-all"
-              title="Export database to JSON / TS / Markdown"
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-zinc-300 hover:text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 transition-colors"
+              title="Export database to JSON / TypeScript"
             >
-              <Download className="w-3.5 h-3.5 text-cyan-400" />
-              <span className="hidden sm:inline">Export</span>
+              <Download className="w-3.5 h-3.5 text-zinc-400" />
+              <span>Export</span>
             </button>
           )}
 
+          {/* Teleprompter Script */}
           <button
             onClick={onOpenTeleprompter}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-zinc-800/80 hover:bg-zinc-700/80 text-zinc-200 border border-zinc-700 transition-all"
-            title="Open Demo Video Recording Teleprompter"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-zinc-300 hover:text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 transition-colors"
+            title="Video recording teleprompter guide"
           >
-            <Video className="w-3.5 h-3.5 text-violet-400" />
-            <span className="hidden sm:inline">Demo Script</span>
+            <Video className="w-3.5 h-3.5 text-zinc-400" />
+            <span className="hidden sm:inline">Script</span>
           </button>
 
+          {/* Referral Verified */}
+          <a
+            href="https://ref.wisprflow.ai/hhg"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-violet-300 bg-violet-950/40 hover:bg-violet-950/70 border border-violet-800/40 transition-colors"
+            title="Wispr Referral Account Verified (ref.wisprflow.ai/hhg)"
+          >
+            <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+            <span>Referral Verified</span>
+            <ExternalLink className="w-2.5 h-2.5 text-violet-400 opacity-70" />
+          </a>
+
+          {/* Task Submission */}
           <button
             onClick={onOpenSubmissionModal}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-md shadow-violet-600/30 transition-all active:scale-95"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-violet-600 hover:bg-violet-500 text-white transition-colors shadow-sm"
           >
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>Task Submission</span>
+            <Sparkles className="w-3.5 h-3.5 text-violet-200" />
+            <span>Submission</span>
           </button>
 
+          {/* GitHub Repo */}
           <a
             href="https://github.com/dubeysanskar/flow"
             target="_blank"
             rel="noopener noreferrer"
-            className="p-2 rounded-xl text-zinc-400 hover:text-white bg-surface-card hover:bg-surface-highlight border border-surface-border transition-all"
-            title="View GitHub Repository dubeysanskar/flow"
+            className="p-1.5 rounded-lg text-zinc-400 hover:text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 transition-colors"
+            title="GitHub: dubeysanskar/flow"
           >
             <Github className="w-4 h-4" />
           </a>
@@ -129,4 +129,3 @@ export function Header({
     </header>
   );
 }
-
